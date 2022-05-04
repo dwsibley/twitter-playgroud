@@ -4,7 +4,13 @@ import tweepy
 
 bearer_token = os.environ.get("TWITTER_BEARER_TOKEN")
 
-client = tweepy.Client(bearer_token)
+# globals - should probably be in stream class as well as some other functionality -
+timestamp = datetime.datetime.now()
+tweet_filename = "{}-tweets.jsonl".format(timestamp)
+media_filename = "{}-media.jsonl".format(timestamp)
+
+tweet_file = open(tweet_filename, 'w')
+media_file = open(media_filename, 'w')
 
 class MyStream(tweepy.StreamingClient):
 
@@ -12,14 +18,14 @@ class MyStream(tweepy.StreamingClient):
         # print(dir(tweet))
         print(tweet.data)
         print()
+        tweet_file.write("{}\n".format(tweet.data))
 
     # looks like this is separate so assuming need to write to separate jsonl output and merge later
     def on_includes(self, includes):
         for media in includes.get('media', []):
             print(media.data)
+            media_file.write("{}\n".format(media.data))
         print()
-
-
 
 #streaming_client = tweepy.StreamingClient(bearer_token=bearer_token)
 streaming_client = MyStream(
@@ -51,7 +57,9 @@ try:
     print("..press Ctrl-C to stop")
     streaming_client.filter(
         expansions="attachments.media_keys",
-        media_fields=["media_key", "type", "url", "width", "height", "duration_ms", "preview_image_url"],
+        media_fields=["media_key", "type", "url", "width", "height", "duration_ms", "preview_image_url", "public_metrics"],
     )
 except KeyboardInterrupt:
     print("..ending script")
+tweet_file.close()
+media_file.close()
