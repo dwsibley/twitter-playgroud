@@ -61,5 +61,6 @@ try:
     )
 except KeyboardInterrupt:
     print("..ending script")
+    streaming_client.disconnect()
 tweet_file.close()
 media_file.close()
