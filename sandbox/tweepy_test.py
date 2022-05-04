@@ -21,7 +21,7 @@ tweets_response = client.get_users_tweets(
     end_time = end_time,
     #media_fields = [{"type":"video"}],
     expansions="attachments.media_keys",
-    media_fields=["media_key", "type", "url", "height", "duration_ms", "preview_image_url"],
+    media_fields=["media_key", "type", "url", "width", "height", "duration_ms", "preview_image_url"],
     max_results = 15,
 )
 tweets = tweets_response.data
